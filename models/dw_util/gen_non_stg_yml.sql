@@ -1,0 +1,41 @@
+-- depends_on: {{ ref('generate_fk_table') }}
+{% set myuser = target.user %} 
+with 
+all_columns as (select columns.* from information_schema.columns where table_catalog = 'DEV_EDW_DB'), 
+fk as (select * from {{ref ('generate_fk_table')}} ), 
+header as (
+    select lower(table_schema) as table_schema , lower(table_name) as table_name --,  'stg_' || lower(table_schema) ||'__' ||lower(table_name) as target_name
+,-9 as ordinal_position,  
+'version: 2
+
+# reminder: Replace TBD descriptions with proper descriptions
+# reminder: Add tests  
+ 
+models:
+  - name: ' || lower(table_name) || '
+    description: "tbd"
+    columns:' as yml_text  from all_columns  qualify row_number() over (partition by all_columns.table_schema, all_columns.table_name order by all_columns.ordinal_position) = 1
+),
+format_text as (
+select table_schema, table_name,  ordinal_position,  yml_text from header 
+union all     
+select lower(table_schema) as table_schema , lower(table_name) as table_name 
+,ordinal_position,  '    - name: '
+  || case when lower(column_name) = 'id' then lower(table_name)||'_'|| lower(column_name) else lower(column_name) end 
+  || '\n      description: tbd' 
+  || case when ( substr(lower(table_name),1,3) = 'dim' and  contains(lower(column_name), 'key') ) then '\n      tests:\n        - unique\n        - not_null'  
+          when ( substr(lower(table_name),1,3) = 'fct' and  contains(lower(column_name), 'key') ) then coalesce(fk.fk_test,'\n      tests:\n        - unique\n        - not_null'  )
+          else '' end as yml_text 
+ from all_columns
+ left outer join fk on all_columns.table_schema = fk.fk_schema_name 
+                                                 and all_columns.table_name =   fk.fk_table_name 
+                                                 and all_columns.column_name =  fk.fk_column_name  
+),
+final as 
+(
+select table_schema, table_name,   listagg(yml_text, '\n') within group (order by ordinal_position) as yml_text from format_text
+group by table_schema, table_name
+)
+select substr(table_name,1,3) table_type, contains(lower(table_name), 'dim') as is_dim, final.* from final
+where table_schema like 'vdiaz%' and table_schema not in ( 'vdiaz_dw_util', 'vdiaz_seed_data')  and table_name not like 'stg%' 
+-- @bernie we have hard coded the line above, is there a way to make this more flexible?

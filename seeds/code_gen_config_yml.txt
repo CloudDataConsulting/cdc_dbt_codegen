@@ -1,0 +1,32 @@
+version: 2
+
+# example
+
+seeds:
+#  - name: ... # declare properties of additional seeds
+  - name: code_gen_config
+    description: Stores info used to generate dbt files automatically 
+    docs:
+      show: true
+#    tests:
+#      - <test>
+#      - ... # declare additional tests
+    columns:
+      - name: source_name
+        description: The short name for the schema/data source
+        meta: {"owner":"Bernie Pruss","Approval Date":"4/8/2021" }
+#        quote: true | false
+#        tags: [<string>]
+        tests:
+          - unique
+          - not_null
+#          - ... # declare additional tests
+      - name: database
+        description: The name of the database that the source data is stored in. 
+        tests:
+          - not_null
+      - name: schema
+        description: The name of the schema that the source data is stored in. 
+        tests:
+          - not_null
+        

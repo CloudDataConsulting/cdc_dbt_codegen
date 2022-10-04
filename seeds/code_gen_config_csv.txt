@@ -1,0 +1,2 @@
+generate_flag,source_name,description, database, schema, loader, loaded_at_field
+Y,sfdc_arc,The Application used to manage Agents,PRD_FIVETRAN_RAW_DB,SFDC_ARC,Fivetran,_fivetran_synced

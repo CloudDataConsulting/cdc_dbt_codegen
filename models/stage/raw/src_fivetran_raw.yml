@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: fivetran_raw
+    description: metadata about the tables in this database.  
+    database: prd_fivetran_raw_db
+    schema: information_schema
+    loader: na
+    loaded_at_field:
+    tables: 
+      - name: tables
+      - name: columns
+      - name: referenctial_contraints
+      - name: sequences
+      - name: schemata
+      - name: views
