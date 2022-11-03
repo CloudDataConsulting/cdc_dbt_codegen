@@ -1,3 +1,10 @@
+/* Copyright (C) 2022 Cloud Data Consultants Inc. - All Rights Reserved - CONFIDENTIAL
+*
+* You may not copy, reproduce, distribute, transmit, modify, create derivative works, 
+* or in any other way exploit any part of copyrighted material without permission.
+* 
+*/
+
 {{  config(  materialized='view', )  }}
 
 with fivetran_raw_tables as (select * from  {{ source('fivetran_raw', 'tables') }}),
