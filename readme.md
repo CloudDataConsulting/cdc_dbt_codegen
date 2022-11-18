@@ -4,6 +4,16 @@ We have a pattern that we follow when working with dbt.
 We put our raw data in its own database. 
 Each source system, in its own well named schema. 
 
+## Installation
+
+Include in the models code block reference to the cdc_dbt_utils:
+
+models:
+  cdc_dbt_codegen:
+    dw_util:
+      +materialized: view
+      +schema: dw_util
+
 ## Raw to stage 
 For each source schema we create a seed record in our **code_gen_config.csv** with the following columns: 
 * generate_flag (Y/N) - This column lets us control with data which 
