@@ -1,2 +1,10 @@
+# /* Copyright (C) 2022 Cloud Data Consultants Inc. - All Rights Reserved - 
+# *
+# * You may not copy, reproduce, distribute, transmit, modify, create derivative works, 
+# * or in any other way exploit any part of copyrighted material without permission.
+# * 
+# */
+
+
 generate_flag,source_name,description, database, schema, loader, loaded_at_field
 Y,sfdc_arc,The Application used to manage Agents,PRD_FIVETRAN_RAW_DB,SFDC_ARC,Fivetran,_fivetran_synced

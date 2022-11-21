@@ -1,3 +1,10 @@
+# /* Copyright (C) 2022 Cloud Data Consultants Inc. - All Rights Reserved - 
+# *
+# * You may not copy, reproduce, distribute, transmit, modify, create derivative works, 
+# * or in any other way exploit any part of copyrighted material without permission.
+# * 
+# */
+
 #this is our main stage code_gen file
 
 import sys

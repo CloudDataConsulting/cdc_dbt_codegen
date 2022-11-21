@@ -1,3 +1,10 @@
+/* Copyright (C) 2022 Cloud Data Consultants Inc. - All Rights Reserved - 
+*
+* You may not copy, reproduce, distribute, transmit, modify, create derivative works, 
+* or in any other way exploit any part of copyrighted material without permission.
+* 
+*/
+
 {% set myuser = target.user %} 
 {%- set suspended_query -%}
 create or replace table {{ myuser }}_dw_util.dbt_tmp__gen_db_list as 
