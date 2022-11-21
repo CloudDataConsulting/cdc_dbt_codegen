@@ -4,18 +4,20 @@
 # * or in any other way exploit any part of copyrighted material without permission.
 # * 
 # */
-
-
-config-version: 2
-
 name: 'cdc_dbt_codegen'
-version: '0.1.4'
-
-
+version: '0.1.5'
+config-version: 2
 require-dbt-version: [">=1.0.0", "<2.0.0"]
 
+vars:
+  cdc_dbt_codegen:
+    source_db: ['snowflake']
+
 models:
-  dw_util:
-    materialized: table    
+  cdc_dbt_codegen:
+    tmp:
+      +materialized: view
+    +materialized: table
+    +schema: stg_source
 
 seed-paths: ["seeds"]
