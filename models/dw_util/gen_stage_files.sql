@@ -7,7 +7,7 @@
 
 {{  config(  materialized='view', ) 
  }}
-with raw_table_list as (select * from {{ ref('raw_table_list') }}
+with src_table_list as (select * from {{ ref('src_table_list') }}
 ),
 automation_config as (select * from {{ ref('code_gen_config')  }} where generate_flag = 'Y'
 ), 
@@ -25,11 +25,11 @@ sources:
 '    tables:' as yml_text from automation_config
 ),  
 list as (
-  select automation_config.source_name, 0 sort_by, '      - name: ' || lower(raw_table_list.table_name)  
+  select automation_config.source_name, 0 sort_by, '      - name: ' || lower(src_table_list.table_name)  
    || '\n        description: tbd '  as yml_text 
-  from raw_table_list 
-       inner join automation_config on upper(raw_table_list.table_schema) = upper(automation_config."SCHEMA")
-order by raw_table_list.table_name ),
+  from src_table_list 
+       inner join automation_config on upper(src_table_list.table_schema) = upper(automation_config."SCHEMA")
+order by src_table_list.table_name ),
 union_final as (
   select * from header
   union all 

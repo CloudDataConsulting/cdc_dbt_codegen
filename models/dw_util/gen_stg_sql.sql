@@ -11,7 +11,7 @@ with
 code_gen_config as 
 (select * from  {{ ref('code_gen_config') }} where generate_flag = 'Y'
 ),
-columns as (select * from {{ref ('raw_column_list')}} ),
+columns as (select * from {{ref ('src_column_list')}} ),
 all_columns as 
 (select 
 code_gen_config.source_name ,columns.* from columns
