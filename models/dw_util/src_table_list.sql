@@ -11,7 +11,7 @@
 
 with src_table_list as ( select * from (
                     {% for src_database in sources %}
-                    select * from  {{source_db}}.information_schema.tables 
+                    select * from  {{src_database}}.information_schema.tables 
                     {% if not loop.last %}union all{% endif %}
                     {% endfor %}
                         )  where table_schema not in ('INFORMATION_SCHEMA') )

@@ -9,8 +9,8 @@
 {% set sources =  var('source_dbs')  %}
 
 with src_columns as ( select * from (
-                    {% for source_db in sources %}
-                    select * from  {{source_db}}.information_schema.columns
+                    {% for src_database in sources %}
+                    select * from  {{src_database}}.information_schema.columns
                     {% if not loop.last %}union all{% endif %}
                     {% endfor %}
                        )  where table_schema not in ('INFORMATION_SCHEMA') 
