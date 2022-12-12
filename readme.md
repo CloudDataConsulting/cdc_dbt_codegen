@@ -14,6 +14,21 @@ models:
       +materialized: view
       +schema: dw_util
 
+## vars added release 0.2.0 
+define the source databases you wish to generate code for here: 
+
+In your project.yml:
+
+```vars: 
+  source_dbs: ["prd_fivetran_raw_db","prd_matillion_raw_db","snowflake"]```
+
+
+## Release Notes 0.2.0 
+- added the ability to use variables for source databases. 
+- renamed "raw" to "src" as not all sources are necessarily "raw" datbases.
+
+
+
 ## Raw to stage 
 For each source schema we create a seed record in our **code_gen_config.csv** with the following columns: 
 * generate_flag (Y/N) - This column lets us control with data which 

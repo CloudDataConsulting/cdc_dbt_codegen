@@ -6,9 +6,16 @@
 */
 
 {{  config(  materialized='view', )  }}
+{% set sources =  var('source_dbs')  %}
 
-with raw_columns as 
-(select * from  {{ source('fivetran_raw', 'columns') }} ),
+with src_columns as ( select * from (
+                    {% for source_db in sources %}
+                    select * from  {{source_db}}.information_schema.columns
+                    {% if not loop.last %}union all{% endif %}
+                    {% endfor %}
+                       )  where table_schema not in ('INFORMATION_SCHEMA') 
+                    ),
+
 final as (
 select
       table_catalog
@@ -35,7 +42,6 @@ select
     , character_set_schema
     , character_set_name
     , comment
-from raw_columns    
-where table_schema not in ('INFORMATION_SCHEMA')
+from src_columns    
 )
 select * from final 

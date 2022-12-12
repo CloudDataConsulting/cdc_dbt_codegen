@@ -21,7 +21,7 @@ from snowflake.connector import DictCursor
 # Prior to running this script...the following dbt jobs must be run
 # in order to populate the table used by this script in file creation
 #
-# dbt run -m raw_table_list 
+# dbt run -m src_table_list 
 # dbt run -m gen_stage_files  
 # dbt run -m gem_stage_yml
 # dbt run -m gen_stage_src_views

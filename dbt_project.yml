@@ -4,18 +4,19 @@
 # * or in any other way exploit any part of copyrighted material without permission.
 # * 
 # */
-
-
-config-version: 2
-
 name: 'cdc_dbt_codegen'
-version: '0.1.4'
-
-
+version: '0.2.0'
+config-version: 2
 require-dbt-version: [">=1.0.0", "<2.0.0"]
 
+vars:
+  source_db: ['prd_fivetran_raw_db','prd_matillion_raw_db']
+
 models:
-  dw_util:
-    materialized: table    
+  cdc_dbt_codegen:
+    tmp:
+      +materialized: view
+    +materialized: table
+    +schema: stg_source
 
 seed-paths: ["seeds"]
