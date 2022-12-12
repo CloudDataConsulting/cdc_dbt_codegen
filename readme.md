@@ -14,16 +14,18 @@ models:
       +materialized: view
       +schema: dw_util
 
-## vars added release ?.?.? 
+## vars added release 0.2.0 
 define the source databases you wish to generate code for here: 
 
-vars: 
-  source_dbs: ["prd_fivetran_raw_db","prd_matillion_raw_db","snowflake"]
+In your project.yml:
+
+```vars: 
+  source_dbs: ["prd_fivetran_raw_db","prd_matillion_raw_db","snowflake"]```
 
 
-## Release Notes ?.?.? 
-added the ability to use variables for source databases. 
-renamed "raw" to "src" as not all sources are necessarily "raw" datbases.
+## Release Notes 0.2.0 
+- added the ability to use variables for source databases. 
+- renamed "raw" to "src" as not all sources are necessarily "raw" datbases.
 
 
 

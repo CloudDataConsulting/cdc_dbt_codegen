@@ -5,13 +5,12 @@
 # * 
 # */
 name: 'cdc_dbt_codegen'
-version: '0.1.5'
+version: '0.2.0'
 config-version: 2
 require-dbt-version: [">=1.0.0", "<2.0.0"]
 
 vars:
-  cdc_dbt_codegen:
-    source_db: ['snowflake']
+  source_db: ['prd_fivetran_raw_db','prd_matillion_raw_db']
 
 models:
   cdc_dbt_codegen:

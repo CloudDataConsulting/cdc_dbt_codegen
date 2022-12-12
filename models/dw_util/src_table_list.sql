@@ -7,10 +7,10 @@
 
 {{  config(  materialized='view', )  }}
 
-{% set sources =  var('source_dbs')  %}
+{% set sources =  var('source_db')  %}
 
 with src_table_list as ( select * from (
-                    {% for source_db in sources %}
+                    {% for src_database in sources %}
                     select * from  {{source_db}}.information_schema.tables 
                     {% if not loop.last %}union all{% endif %}
                     {% endfor %}
