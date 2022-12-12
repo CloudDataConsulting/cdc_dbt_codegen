@@ -6,7 +6,7 @@
 */
 
 {{  config(  materialized='view', )  }}
-{% set sources =  var('source_dbs')  %}
+{% set sources =  var('source_db')  %}
 
 with src_columns as ( select * from (
                     {% for src_database in sources %}
