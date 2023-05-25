@@ -5,9 +5,9 @@
 * 
 */
 
-{% set myuser = target.user %} 
+{% set myschema = target.user %} 
 {%- set suspended_query -%}
-create or replace table {{ myuser }}_dw_util.dbt_tmp__gen_db_list as 
+create or replace table {{ myschema }}_dw_util.dbt_tmp__gen_db_list as 
 select 
 "name" as DB_NAME
 ,"created_on" as CREATED_ON
@@ -19,7 +19,7 @@ from TABLE(RESULT_SCAN(last_query_id()));
 {%- endset -%}
 
 {% set query %}
-    CREATE SCHEMA IF NOT EXISTS {{ myuser }}_DW_UTIL
+    CREATE SCHEMA IF NOT EXISTS {{ myschema }}_DW_UTIL
 {% endset %}
 
 {% do run_query(query) %}
@@ -30,6 +30,6 @@ from TABLE(RESULT_SCAN(last_query_id()));
 {% do run_query('COMMIT') %}
 
 select *
-from {{ myuser }}_dw_util.dbt_tmp__gen_db_list
+from {{ myschema }}_dw_util.dbt_tmp__gen_db_list
 
 

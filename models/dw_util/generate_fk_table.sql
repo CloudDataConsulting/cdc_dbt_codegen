@@ -6,9 +6,9 @@
 */
 
 -- depends_on: {{ ref('generate_db_table') }}
-{% set myuser = target.user %} 
+{% set myschema = target.user %} 
 {%- set suspended_query -%}
-create or replace table {{ myuser }}_dw_util.dbt_tmp__gen_fk_list as 
+create or replace table {{ myschema }}_dw_util.dbt_tmp__gen_fk_list as 
 select 
 "pk_database_name" as PK_DATABASE_NAME
 ,"fk_schema_name" as FK_SCHEMA_NAME
@@ -26,7 +26,7 @@ from TABLE(RESULT_SCAN(last_query_id()));
 
 
 {% set query %}
-    CREATE SCHEMA IF NOT EXISTS {{ myuser }}_DW_UTIL
+    CREATE SCHEMA IF NOT EXISTS {{ myschema }}_DW_UTIL
 {% endset %}
 
 {% do run_query(query) %}
@@ -37,4 +37,4 @@ from TABLE(RESULT_SCAN(last_query_id()));
 {% do run_query('commit') %}
 
 select *
-from {{ myuser }}_dw_util.dbt_tmp__gen_fk_list
+from {{ myschema }}_dw_util.dbt_tmp__gen_fk_list
