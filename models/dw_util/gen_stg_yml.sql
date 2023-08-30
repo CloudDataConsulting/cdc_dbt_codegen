@@ -20,7 +20,7 @@ on upper(columns.table_catalog) = upper(code_gen_config."DATABASE")
 and upper(columns.table_schema) = upper(code_gen_config."SCHEMA") 
 ),
 header as (
-    select lower(source_name) as dw_source_name , lower(table_name) as table_name, 'stg_' || lower(source_name) ||'__' ||lower(table_name) as target_name,  
+    select lower(source_name) as source_name , lower(table_name) as table_name, 'stg_' || lower(source_name) ||'__' ||lower(table_name) as target_name,  
 -9 as ordinal_position,  
 'version: 2
 
@@ -35,7 +35,7 @@ models:
 format_text as (
 select source_name, table_name, target_name, ordinal_position,  yml_text from header 
 union all     
-select lower(source_name) as dw_source_name , lower(table_name) as table_name, 'stg_' || lower(source_name) ||'__' ||lower(table_name) as target_name,  
+select lower(source_name) as source_name , lower(table_name) as table_name, 'stg_' || lower(source_name) ||'__' ||lower(table_name) as target_name,  
 ordinal_position,  '    - name: '
   || case when lower(column_name) = 'id' then lower(table_name)||'_'|| lower(column_name) else lower(column_name) end 
   || '\n      description: tbd' 

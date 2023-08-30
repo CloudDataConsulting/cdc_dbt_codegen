@@ -21,7 +21,7 @@ and upper(columns.table_schema) = upper(code_gen_config."SCHEMA" )
 ),
 join_filter as (
 select 
-   lower(all_columns.source_name) as dw_source_name 
+   lower(all_columns.source_name) as source_name 
   ,lower(all_columns.table_catalog) as source_db
   ,lower(all_columns.table_schema) as source_schema 
   ,all_columns.table_name_quoted  as source_table_quoted
