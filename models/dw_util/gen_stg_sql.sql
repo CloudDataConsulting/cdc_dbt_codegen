@@ -21,7 +21,7 @@ and upper(columns.table_schema) = upper(code_gen_config."SCHEMA" )
 ),
 join_filter as (
 select 
-   lower(all_columns.source_name) as source_name 
+   lower(all_columns.source_name) as dw_source_name 
   ,lower(all_columns.table_catalog) as source_db
   ,lower(all_columns.table_schema) as source_schema 
   ,all_columns.table_name_quoted  as source_table_quoted
@@ -81,7 +81,7 @@ case when data_type in ('text','varchar','varying','variant') then
 from join_filter 
 union all 
 select source_name, source_db, source_schema, source_table, target_name, column_name, 9999 ordinal_position, 
- ','''|| source_name || '''  as source_name 
+ ','''|| source_name || '''  as dw_source_name 
   from ' || source_table || 
 '
 ) 
