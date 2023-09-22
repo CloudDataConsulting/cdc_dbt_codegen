@@ -30,6 +30,7 @@ list as (
    || '\n        description: tbd '  as yml_text 
   from src_table_list 
        inner join code_gen_config on upper(src_table_list.table_schema) = upper(code_gen_config."SCHEMA")
+       and  upper(src_table_list.table_catalog)  = upper(code_gen_config.database)
 order by src_table_list.table_name ),
 union_final as (
   select * from header
