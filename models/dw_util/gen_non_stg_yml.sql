@@ -50,3 +50,6 @@ where table_schema like lower(current_user()) || '_%'
                                      , lower(current_user()) || '_seed_data'
                                      , lower(current_user()) ||'_data_ops') 
       and lower(table_name) not like 'stg%'
+      and lower(table_name) not like 'unique_%'
+      and lower(table_name) not like 'not_null%'
+      and lower(table_name) not like 'pk_%'
