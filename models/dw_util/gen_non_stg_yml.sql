@@ -45,7 +45,7 @@ from format_text
 group by table_schema, table_name
 )
 select substr(table_name,1,3) table_type, contains(lower(table_name), 'dim') as is_dim, final.* from final
-where table_schema like current_user() || '_%' 
+where table_schema like lower(current_user()) || '_%' 
       and lower(table_schema) not in ( lower(current_user()) ||'_dw_util'
                                      , lower(current_user()) || '_seed_data'
                                      , lower(current_user()) ||'_data_ops') 
