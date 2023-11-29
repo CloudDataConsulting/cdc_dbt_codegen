@@ -162,4 +162,4 @@ post_hook=[
 ```
 
 
-The important thing is if they constraints are in place when we generate the fact table yml files it will product tests for the PK-FK relationships. 
+The important thing is if the constraints are in place when we generate the fact table yml files it will product tests for the PK-FK relationships. 
