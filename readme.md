@@ -19,8 +19,10 @@ define the source databases you wish to generate code for here:
 
 In your project.yml:
 
-```vars: 
-  source_dbs: ["prd_fivetran_raw_db","prd_matillion_raw_db","snowflake"]```
+```
+  vars: 
+  source_dbs: ["prd_fivetran_raw_db","prd_matillion_raw_db","snowflake"]
+```
 
 
 ## Release Notes 0.2.0 
