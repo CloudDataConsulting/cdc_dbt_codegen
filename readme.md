@@ -134,12 +134,30 @@ for each fct table generate
 Note for this to work, we have to have defined the PKs for each dimension, 
 and the foreign keys in each fact table.  
 
-We do this with post_hook statments in the config block for the model: 
+We do this with post_hook statments in the config block for the dim models: 
+This example is for dim_customer.sql 
 ```
-{{  config(  materialized='table', persist_docs={"relation": true, "columns": true},
- post_hook="alter table {{ this }} add primary key (account_key)",  ) 
+{{  config( 
+ post_hook="alter table {{ this }} add primary key (customer_key)",  ) 
  }}
 ```
 and for a fact table: 
+This example is from fct_purchase_order.sql
+```
+{{ config(
 
-        
+post_hook=[
+    "alter table {{ this }} add primary key (po_transaction_id, po_line_num)",
+    "alter table {{ this }} add constraint fct_po_line_store foreign key (store_key) references {{ ref('dim_store') }}(store_key)",
+    "alter table {{ this }} add constraint fct_po_line_supplier foreign key (supplier_key) references {{ ref('dim_supplier') }}(supplier_key)",
+    "alter table {{ this }} add constraint fct_po_line_product foreign key (product_key) references {{ ref('dim_product') }}(product_key)",
+    "alter table {{ this }} add constraint fct_po_line_order_date foreign key (order_date_key) references {{ ref('dim_order_date') }}(order_date_key)",
+    "alter table {{ this }} add constraint fct_po_line_delivery_date foreign key (delivery_date_key) references {{ ref('dim_delivery_date') }}(delivery_date_key)",
+    "alter table {{ this }} add constraint fct_po_line_cancel_date foreign key (cancel_date_key) references {{ ref('dim_cancel_date') }}(cancel_date_key)",
+    "alter table {{ this }} add constraint fct_po_line_closed_date foreign key (closed_date_key) references {{ ref('dim_closed_date') }}(closed_date_key)",
+    ],
+ ) }}
+```
+
+
+The important thing is if they constraints are in place when we generate the fact table yml files it will product tests for the PK-FK relationships. 
