@@ -29,7 +29,7 @@ union all
 select lower(table_schema) as table_schema , lower(table_name) as table_name 
 ,ordinal_position,  '    - name: '
   || case when lower(column_name) = 'id' then lower(table_name)||'_'|| lower(column_name) else lower(column_name) end || char(10)
-  || '      description:  \'\{\{ doc("' || lower(table_name) || '")}}''' 
+  || '      description:  \'\{\{ doc("' || lower(column_name) || '")}}''' 
   || case when ( substr(lower(table_name),1,3) = 'dim' and  contains(lower(column_name), 'key') ) then '\n      tests:\n        - unique\n        - not_null'  
           when ( substr(lower(table_name),1,3) = 'fct' and  contains(lower(column_name), 'key') ) then coalesce(fk.fk_test,'\n      tests:\n        - unique\n        - not_null'  )
           else '' end as yml_text 
