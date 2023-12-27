@@ -19,9 +19,9 @@ header as (
 # reminder: Add tests  
  
 models:
-  - name: ' || lower(table_name) || '
-    description: "tbd"
-    columns:' as yml_text  from all_columns  qualify row_number() over (partition by all_columns.table_schema, all_columns.table_name order by all_columns.ordinal_position) = 1
+  - name: ' || lower(table_name) || char(10) || 
+'    ' ||'description:  \'\{\{ doc("' || lower(table_name) || '")}}''' || char(10) ||
+'    ' ||'columns:' as yml_text  from all_columns  qualify row_number() over (partition by all_columns.table_schema, all_columns.table_name order by all_columns.ordinal_position) = 1
 ),
 format_text as (
 select table_schema, table_name,  ordinal_position,  yml_text from header 
