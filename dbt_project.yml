@@ -9,8 +9,9 @@ version: '0.2.0'
 config-version: 2
 require-dbt-version: [">=1.0.0", "<2.0.0"]
 
-vars:
-  source_db: ['prd_fivetran_raw_db','prd_matillion_raw_db']
+# This var has been moved to the parent project dbt_project.yml 
+#vars:
+#  source_db: ['prd_fivetran_raw_db','prd_matillion_raw_db']
 
 models:
   cdc_dbt_codegen:
