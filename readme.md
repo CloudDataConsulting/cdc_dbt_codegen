@@ -14,6 +14,18 @@ models:
       +materialized: view
       +schema: dw_util
 
+## vars added release 0.2.10
+Fixed a bug exposed when we converted to SSO. 
+Two of the generate objects were:
+set myschema = target.user 
+and should have been: 
+set myschema = target.schema. 
+Before sso scheam and user where the same, masking the issue. 
+
+## vars added release 0.2.9
+Converted to use information schema instead of generating tables.  
+
+
 ## vars added release 0.2.0 
 define the source databases you wish to generate code for here: 
 
