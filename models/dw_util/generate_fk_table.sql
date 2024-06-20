@@ -6,7 +6,7 @@
 */
 
 -- depends_on: {{ ref('generate_db_table') }}
-{% set myschema = target.user %} 
+{% set myschema = target.schema %} 
 {%- set suspended_query -%}
 create or replace table {{ myschema }}_dw_util.dbt_tmp__gen_fk_list as 
 select 

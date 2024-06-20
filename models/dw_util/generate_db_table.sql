@@ -5,7 +5,7 @@
 * 
 */
 
-{% set myschema = target.user %} 
+{% set myschema = target.schema %} 
 {%- set suspended_query -%}
 create or replace table {{ myschema }}_dw_util.dbt_tmp__gen_db_list as 
 select 
