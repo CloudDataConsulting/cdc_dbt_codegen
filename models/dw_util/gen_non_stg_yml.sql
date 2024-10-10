@@ -19,18 +19,21 @@ header as (
 # reminder: Add tests  
  
 models:
-  - name: ' || lower(table_name) || char(10) || 
-'    ' ||'description:  \'\{\{ doc("' || lower(table_name) || '")}}''' || char(10) ||
-'    ' ||'columns:' as yml_text  from all_columns  qualify row_number() over (partition by all_columns.table_schema, all_columns.table_name order by all_columns.ordinal_position) = 1
+  - name: ' || lower(table_name) ||
+  '\n    description: tbd' ||
+  '\n    columns:' as yml_text  from all_columns  qualify row_number() over (partition by all_columns.table_schema, all_columns.table_name order by all_columns.ordinal_position) = 1
 ),
+
+
 format_text as (
 select table_schema, table_name,  ordinal_position,  yml_text from header 
 union all     
 select lower(table_schema) as table_schema , lower(table_name) as table_name 
 ,ordinal_position,  '    - name: '
-  || case when lower(column_name) = 'id' then lower(table_name)||'_'|| lower(column_name) else lower(column_name) end || char(10)
-  || '      description:  \'\{\{ doc("' || lower(column_name) || '")}}''' 
-  || case when ( substr(lower(table_name),1,3) = 'dim' and  contains(lower(column_name), 'key') ) then '\n      tests:\n        - unique\n        - not_null'  
+  || case when lower(column_name) = 'id' then lower(table_name)||'_'|| lower(column_name) else lower(column_name) end ||
+
+'    ' || '\n      description: tbd'
+  || case when ( substr(lower(table_name),1,3) = 'dim' and  contains(lower(column_name), 'key') ) then '\n      data-tests:\n        - unique\n        - not_null'  
           when ( substr(lower(table_name),1,3) = 'fct' and  contains(lower(column_name), 'key') ) then coalesce(fk.fk_test,'\n      tests:\n        - unique\n        - not_null'  )
           else '' end as yml_text 
  from all_columns
