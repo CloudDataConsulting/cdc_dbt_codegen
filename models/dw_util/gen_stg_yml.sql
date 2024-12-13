@@ -24,14 +24,15 @@ header as (
 -9 as ordinal_position,  
 'version: 2
 
-# reminder: Replact TBD descriptions with proper descriptions
+# reminder: Replace TBD descriptions with proper descriptions
 # reminder: Add tests  
  
 models:
   - name: ' || target_name || '
-    description: "TBD"
+    description: tbd
     columns:' as yml_text  from all_columns  qualify row_number() over (partition by all_columns.source_name, all_columns.table_name order by all_columns.ordinal_position) = 1
 ),
+
 format_text as (
 select source_name, table_name, target_name, ordinal_position,  yml_text from header 
 union all     
@@ -39,7 +40,7 @@ select lower(source_name) as source_name , lower(table_name) as table_name, 'stg
 ordinal_position,  '    - name: '
   || case when lower(column_name) = 'id' then lower(table_name)||'_'|| lower(column_name) else lower(column_name) end 
   || '\n      description: tbd' 
-  || case when lower(column_name) = 'id' then '\n      tests:\n        - unique\n        - not_null'  else '' end as yml_text  
+  || case when lower(column_name) = 'id' then '\n      data-tests:\n        - unique\n        - not_null'  else '' end as yml_text  
  from all_columns  
 ),
 final as 
