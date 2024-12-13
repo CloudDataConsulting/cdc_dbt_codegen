@@ -14,6 +14,10 @@ models:
       +materialized: view
       +schema: dw_util
 
+## added release 0.2.11
+removed dbt doc references
+support multi scheams per source
+
 ## vars added release 0.2.10
 Fixed a bug exposed when we converted to SSO. 
 Two of the generate objects were:
