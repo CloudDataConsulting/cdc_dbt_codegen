@@ -14,6 +14,10 @@ models:
       +materialized: view
       +schema: dw_util
 
+## added release 0.2.12
+update for dbt change - tests is now dbt_tests in yml
+correct dbt-test to dbt_tests
+
 ## added release 0.2.11
 removed dbt doc references
 support multi scheams per source

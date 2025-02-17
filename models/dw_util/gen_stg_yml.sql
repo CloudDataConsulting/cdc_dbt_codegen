@@ -40,7 +40,7 @@ select lower(source_name) as source_name , lower(table_name) as table_name, 'stg
 ordinal_position,  '    - name: '
   || case when lower(column_name) = 'id' then lower(table_name)||'_'|| lower(column_name) else lower(column_name) end 
   || '\n      description: tbd' 
-  || case when lower(column_name) = 'id' then '\n      data-tests:\n        - unique\n        - not_null'  else '' end as yml_text  
+  || case when lower(column_name) = 'id' then '\n      data_tests:\n        - unique\n        - not_null'  else '' end as yml_text  
  from all_columns  
 ),
 final as 
