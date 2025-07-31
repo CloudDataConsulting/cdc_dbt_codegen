@@ -6,7 +6,7 @@
 # */
 
 """
-CDC DBT Codegen CLI - Main entry point for code generation
+CDC DBT Codegen CLI - Main entry point for code generation.
 
 This module provides the command-line interface for generating dbt staging
 and non-staging files based on Snowflake metadata.
@@ -14,25 +14,26 @@ and non-staging files based on Snowflake metadata.
 
 import sys
 import argparse
-import os
+import logging
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Optional
 
-# Import the existing generation modules
-try:
-    from generate_stg_yml_files import generate as generate_staging, get_snowflake_connection
-    from generate_non_stg_yml_files import generate_yml as generate_non_staging
-except ImportError:
-    # Handle case where script is run directly
-    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-    from generate_stg_yml_files import generate as generate_staging, get_snowflake_connection
-    from generate_non_stg_yml_files import generate_yml as generate_non_staging
+from .core.config import get_config
+from .core.connection import ConnectionManager
+from .core.generators import StageGenerator, DimensionalGenerator, SourceLister
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 
 def create_parser() -> argparse.ArgumentParser:
     """Create and configure the argument parser."""
     parser = argparse.ArgumentParser(
-        prog="code_gen.py",
+        prog="cdc-dbt-codegen",
         description="CDC DBT Codegen - Generate dbt staging and dimensional files from Snowflake metadata",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
@@ -51,7 +52,35 @@ Examples:
   
   # List available sources
   %(prog)s list-sources
+  
+  # Use dry-run to preview changes
+  %(prog)s stage --all --source sfdc_arc --dry-run
         """
+    )
+    
+    # Global arguments
+    parser.add_argument(
+        '--profile',
+        help='dbt profile to use'
+    )
+    parser.add_argument(
+        '--target',
+        help='dbt target to use (default: dev)'
+    )
+    parser.add_argument(
+        '--project-dir',
+        type=Path,
+        help='dbt project directory (default: current directory)'
+    )
+    parser.add_argument(
+        '--verbose', '-v',
+        action='store_true',
+        help='Enable verbose logging'
+    )
+    parser.add_argument(
+        '--version',
+        action='version',
+        version='%(prog)s 0.3.0'
     )
     
     subparsers = parser.add_subparsers(dest='command', help='Commands')
@@ -91,6 +120,12 @@ Examples:
         action='store_true',
         help='Preview what would be generated without creating files'
     )
+    stage_parser.add_argument(
+        '--backup',
+        action='store_true',
+        default=True,
+        help='Backup existing files before overwriting (default: True)'
+    )
     
     # Dimensional command
     dim_parser = subparsers.add_parser(
@@ -99,12 +134,10 @@ Examples:
     )
     dim_parser.add_argument(
         '--database',
-        required=True,
         help='Database name (e.g., dev_edw_db)'
     )
     dim_parser.add_argument(
         '--schema',
-        required=True,
         help='Schema name (e.g., bpruss_base)'
     )
     dim_parser.add_argument(
@@ -116,6 +149,12 @@ Examples:
         action='store_true',
         help='Preview what would be generated without creating files'
     )
+    dim_parser.add_argument(
+        '--backup',
+        action='store_true',
+        default=True,
+        help='Backup existing files before overwriting (default: True)'
+    )
     
     # List sources command
     list_parser = subparsers.add_parser(
@@ -123,17 +162,10 @@ Examples:
         help='List available sources from configuration'
     )
     
-    # Add version argument
-    parser.add_argument(
-        '--version',
-        action='version',
-        version='%(prog)s 0.3.0'
-    )
-    
     return parser
 
 
-def handle_stage_command(args: argparse.Namespace) -> int:
+def handle_stage_command(args: argparse.Namespace, config, conn_manager) -> int:
     """Handle the stage command."""
     # Validate arguments
     if not any([args.all, args.sql, args.yml]):
@@ -144,107 +176,86 @@ def handle_stage_command(args: argparse.Namespace) -> int:
         print("Error: --table requires --source to be specified")
         return 1
     
-    # Build switches for the existing generate function
-    switches = {
-        "add_sql": args.all or args.sql,
-        "add_yml": args.all or args.yml,
-        "source_name": args.source or "",
-        "table": args.table or "",
-    }
-    
-    if args.dry_run:
-        print("DRY RUN MODE - No files will be created")
-        print(f"Would generate: {'SQL and YAML' if args.all else 'SQL' if args.sql else 'YAML'} files")
-        if args.source:
-            print(f"For source: {args.source}")
-        if args.table:
-            print(f"For table: {args.table}")
-        return 0
-    
     try:
+        generator = StageGenerator(config, conn_manager)
+        
         print("Generating staging files...")
         if args.source:
             print(f"Source: {args.source}")
         if args.table:
             print(f"Table: {args.table}")
         
-        # Use the existing generation function
-        generate_staging(switches)
-        print("Staging file generation complete!")
+        files = generator.generate(
+            source_name=args.source,
+            table_name=args.table,
+            generate_sql=args.all or args.sql,
+            generate_yml=args.all or args.yml,
+            dry_run=args.dry_run
+        )
+        
+        print(f"\nGenerated {len(files)} files:")
+        for file in files:
+            print(f"  - {file}")
+        
         return 0
     except Exception as e:
-        print(f"Error generating staging files: {e}")
+        logger.error(f"Error generating staging files: {e}", exc_info=True)
         return 1
 
 
-def handle_dimensional_command(args: argparse.Namespace) -> int:
+def handle_dimensional_command(args: argparse.Namespace, config, conn_manager) -> int:
     """Handle the dimensional command."""
-    if args.dry_run:
-        print("DRY RUN MODE - No files will be created")
-        print(f"Would generate YAML files for: {args.database}.{args.schema}")
-        if args.table:
-            print(f"For table: {args.table}")
-        return 0
-    
     try:
-        print(f"Generating dimensional YAML files for {args.database}.{args.schema}...")
+        generator = DimensionalGenerator(config, conn_manager)
+        
+        print(f"Generating dimensional YAML files...")
+        if args.database:
+            print(f"Database: {args.database}")
+        if args.schema:
+            print(f"Schema: {args.schema}")
         if args.table:
             print(f"Table: {args.table}")
         
-        # TODO: Modify generate_non_stg_yml_files.py to accept parameters
-        # For now, we'll need to update that module
-        print("Note: Dimensional generation currently uses settings from profiles.yml")
-        generate_non_staging()
-        print("Dimensional YAML generation complete!")
+        files = generator.generate(
+            database=args.database,
+            schema=args.schema,
+            table_name=args.table,
+            dry_run=args.dry_run
+        )
+        
+        print(f"\nGenerated {len(files)} files:")
+        for file in files:
+            print(f"  - {file}")
+        
         return 0
     except Exception as e:
-        print(f"Error generating dimensional files: {e}")
+        logger.error(f"Error generating dimensional files: {e}", exc_info=True)
         return 1
 
 
-def handle_list_sources_command() -> int:
+def handle_list_sources_command(conn_manager) -> int:
     """Handle the list-sources command."""
     try:
-        # Get connection and query for sources
-        con = get_snowflake_connection()
-        cur = con.cursor()
+        lister = SourceLister(conn_manager)
+        sources = lister.list_sources()
         
-        # Query the seed data for configured sources
-        query = """
-        SELECT DISTINCT 
-            source_name,
-            description,
-            database,
-            schema,
-            loader,
-            generate_flag
-        FROM code_gen_config
-        ORDER BY source_name
-        """
-        
-        cur.execute(query)
-        results = cur.fetchall()
-        
-        if not results:
+        if not sources:
             print("No sources found in configuration")
+            print("Make sure you have run 'dbt seed' to load the configuration")
             return 0
         
         print("\nConfigured Sources:")
         print("-" * 80)
-        for row in results:
-            source_name, desc, db, schema, loader, active = row
-            status = "ACTIVE" if active == 'Y' else "INACTIVE"
-            print(f"\nSource: {source_name} [{status}]")
-            print(f"  Description: {desc}")
-            print(f"  Location: {db}.{schema}")
-            print(f"  Loader: {loader}")
+        for source in sources:
+            status = "ACTIVE" if source['GENERATE_FLAG'] == 'Y' else "INACTIVE"
+            print(f"\nSource: {source['SOURCE_NAME']} [{status}]")
+            print(f"  Description: {source['DESCRIPTION']}")
+            print(f"  Location: {source['DATABASE']}.{source['SCHEMA']}")
+            print(f"  Loader: {source['LOADER']}")
         
-        cur.close()
-        con.close()
         return 0
     except Exception as e:
-        print(f"Error listing sources: {e}")
-        print("Make sure you have run 'dbt seed' to load the configuration")
+        logger.error(f"Error listing sources: {e}", exc_info=True)
         return 1
 
 
@@ -259,16 +270,35 @@ def main():
     
     args = parser.parse_args()
     
-    # Handle commands
-    if args.command == 'stage':
-        return handle_stage_command(args)
-    elif args.command == 'dimensional':
-        return handle_dimensional_command(args)
-    elif args.command == 'list-sources':
-        return handle_list_sources_command()
-    else:
-        parser.print_help()
+    # Set up logging
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+    
+    # Get configuration
+    try:
+        config = get_config(args.project_dir)
+        conn_manager = ConnectionManager(
+            profile_name=args.profile or config.profile_name,
+            target=args.target
+        )
+    except Exception as e:
+        logger.error(f"Error initializing: {e}")
         return 1
+    
+    # Handle commands
+    try:
+        if args.command == 'stage':
+            return handle_stage_command(args, config, conn_manager)
+        elif args.command == 'dimensional':
+            return handle_dimensional_command(args, config, conn_manager)
+        elif args.command == 'list-sources':
+            return handle_list_sources_command(conn_manager)
+        else:
+            parser.print_help()
+            return 1
+    finally:
+        # Clean up connection
+        conn_manager.close()
 
 
 if __name__ == '__main__':

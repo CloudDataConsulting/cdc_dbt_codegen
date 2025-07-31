@@ -66,7 +66,6 @@ def write_dimensional_yml ():
     cur = con.cursor(DictCursor)
     try:
         v_sql_txt = f"""Select table_name, yml_text from {database}.{schema}.gen_non_stg_yml """
-        #print (v_sql_txt)
         cur.execute(v_sql_txt)
         for rec in cur:
             target = rec['TABLE_NAME']
@@ -83,12 +82,10 @@ def write_dimensional_yml ():
 
 # write out the file
 def write_file(content, fileName, process_name, newfile=True):
-    #fileName = "%s.sql" % (fileName)
     print(fileName)
     if os.path.exists(fileName) and not newfile:
         appendWrite = 'a'  # append if already exists
     else:
-        #print ('new file')
         appendWrite = 'w'  # make a new file if not
     with open(fileName, appendWrite, encoding='utf-8') as fin:
         if (newfile):

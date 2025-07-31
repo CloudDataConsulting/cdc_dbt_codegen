@@ -95,7 +95,6 @@ def gen_table_metadata (source_name, switches):
                 select target_name, sql_text 
                 from {database}.{schema}.gen_stg_sql 
                 where source_name = '{source_name.lower()}' {table_query}"""
-            #print (v_sql_txt)
             cur.execute(v_sql_txt)
             for rec in cur:
                 target = rec['TARGET_NAME']
@@ -120,7 +119,6 @@ def gen_table_metadata (source_name, switches):
             select target_name, yml_text, table_name 
             from {database}.{schema}.gen_stg_yml 
             where source_name = '{source_name.lower()}' {yml_query}"""
-            #print (v_sql_txt)
             cur.execute(v_sql_txt)
             for rec in cur:
                 target = rec['TARGET_NAME']

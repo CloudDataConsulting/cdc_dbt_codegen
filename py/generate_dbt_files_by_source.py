@@ -8,7 +8,6 @@ import logging
 import os
 import confuse
 import datetime
-# import getpass
 import pathlib
 from pathlib import Path
 from snowflake.connector import DictCursor
@@ -62,7 +61,6 @@ schema = f"{schema}_DW_UTIL"
 modelsPath = Path(f"{workingDir}/models/staging")
 print (modelsPath)
 
-#print(env, account, user, password, role, database, role, warehouse, schema)
 
 con = snowflake.connector.connect(
   user=user,
@@ -95,11 +93,9 @@ def generate_yml ():
 #write out the source yml file
 def write_source_yml(source_name, yml_text):
 
-    # folderName = "models/staging/%s" % (source_name)
     folderName = "%s/%s" % (modelsPath, source_name) 
     fileName = "%s/src_%s.yml" % (folderName, source_name)
     print(folderName, fileName)
-    #isdir
     if not os.path.exists(folderName):
         os.makedirs(folderName)
     appendWrite = 'w' # over write old file if exists
@@ -154,7 +150,6 @@ def write_file(content, fileName, process_name, newfile=True):
     if os.path.exists(fileName) and not newfile:
         appendWrite = 'a'  # append if already exists
     else:
-        #print ('new file')
         appendWrite = 'w'  # make a new file if not
     with open(fileName, appendWrite, encoding='utf-8') as fin:
         if (newfile):
