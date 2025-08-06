@@ -36,6 +36,26 @@ python py/code_gen.py nonstage --database <database> --schema <schema> --table <
 python py/code_gen.py yml --database <database> --schema <schema> --table <table>
 ```
 
+### Modern Staging Generator (Key Pair Auth Support)
+```bash
+# List available sources
+python py/generate_staging_modern.py --list-sources
+
+# Generate staging files for a specific source
+python py/generate_staging_modern.py --source asana
+
+# Dry run to preview what would be generated
+python py/generate_staging_modern.py --source asana --dry-run
+
+# Use a specific dbt target
+python py/generate_staging_modern.py --source asana --target prod
+```
+
+This script supports:
+- Private key authentication (file or environment variable)
+- SSO/external browser authentication fallback
+- Environment variables: DBT_PRIVATE_KEY, DBT_PRIVATE_KEY_PASSPHRASE
+
 ### Legacy Python Scripts
 ```bash
 # Generate staging files by source (requires prior dbt runs)
