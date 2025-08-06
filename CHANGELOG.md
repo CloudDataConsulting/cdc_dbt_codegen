@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Improved error handling and debugging output
   - Commands: `--source`, `--list-sources`, `--dry-run`, `--target`
 
+### Removed
+- **Obsolete Python scripts** (functionality replaced by newer tools):
+  - `generate_dbt_files_by_source.py` (marked obsolete, replaced by `generate_staging_modern.py`)
+  - `generate_non_stg_yml_files.py` (replaced by `codegen dimensional` command)
+  - `generate_stg_yml_files.py` (replaced by `codegen stage` command)
+
+### Changed
+- **README.md**: Added clear guidance on which tools to use
+- **Documentation**: Clarified migration path from old scripts to new tools
+
 ## [0.3.0-beta.1] - 2025-01-05
 
 ### Added
