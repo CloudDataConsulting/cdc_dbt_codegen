@@ -1,3 +1,0 @@
-[console_scripts]
-cdc-dbt-codegen = cdc_dbt_codegen.cli:main
-codegen = cdc_dbt_codegen.cli:main

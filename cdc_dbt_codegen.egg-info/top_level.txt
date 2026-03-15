@@ -1,2 +1,0 @@
-cdc_dbt_codegen
-tests
