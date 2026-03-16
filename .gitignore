@@ -38,3 +38,13 @@ Thumbs.db
 
 # Profiles
 profiles.yml
+
+# Python test artifacts
+test_env/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# AI logs
+ai-logs/

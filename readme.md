@@ -2,7 +2,20 @@
 
 We have a pattern that we follow when working with dbt. 
 We put our raw data in its own database. 
-Each source system, in its own well named schema. 
+Each source system, in its own well named schema.
+
+## Which Tool Should I Use?
+
+**For staging file generation with modern authentication (key pair, SSO):**
+```bash
+python py/generate_staging_modern.py --source asana
+```
+
+**For a unified CLI experience (after installation):**
+```bash
+pip install -e .
+codegen stage --source salesforce
+``` 
 
 ## Installation
 
@@ -16,7 +29,7 @@ models:
 
 ## added release 0.2.11
 removed dbt doc references
-support multi scheams per source
+support multi schemas per source
 
 ## vars added release 0.2.10
 Fixed a bug exposed when we converted to SSO. 

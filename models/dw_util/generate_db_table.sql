@@ -24,7 +24,6 @@ from TABLE(RESULT_SCAN(last_query_id()));
 
 {% do run_query(query) %}
 {% do run_query('BEGIN') %}
-{# {% do run_query('show tasks in account') %} #}
 {% do run_query('show databases') %}
 {% set results = run_query(suspended_query) %}
 {% do run_query('COMMIT') %}
