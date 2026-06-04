@@ -34,7 +34,7 @@ select lower(table_schema) as table_schema , lower(table_name) as table_name
 
 '    ' || '\n      description: tbd'
   || case when ( substr(lower(table_name),1,3) = 'dim' and  contains(lower(column_name), 'key') ) then '\n      data_tests:\n        - unique\n        - not_null'  
-          when ( substr(lower(table_name),1,3) = 'fct' and  contains(lower(column_name), 'key') ) then coalesce(fk.fk_test,'\n      tests:\n        - unique\n        - not_null'  )
+          when ( substr(lower(table_name),1,3) = 'fct' and  contains(lower(column_name), 'key') ) then coalesce(fk.fk_test,'\n      data_tests:\n        - unique\n        - not_null'  )
           else '' end as yml_text 
  from all_columns
  left outer join fk on all_columns.table_schema = fk.fk_schema_name 

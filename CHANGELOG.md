@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.13] - 2026-06-04
+
+### Fixed
+- `gen_non_stg_yml.sql`: emit `data_tests:` instead of the deprecated `tests:` config key for the `fct`-key foreign-key fallback inside `coalesce(...)`. Completes the `tests:` → `data_tests:` migration (the `dim`-key and primary `fct`-key paths were already migrated). Silences dbt deprecation warnings in consuming projects.
+- Bump `dbt_project.yml` version to match the release tag (was stale at `0.2.11`).
+
 ## [0.3.0-beta.2] - 2025-01-06
 
 ### Added
