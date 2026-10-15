@@ -10,7 +10,7 @@
 
 with src_table_list as (select * from {{ ref('src_table_list') }}
 ),
-code_gen_config as (select * from {{ ref('code_gen_config')  }} where generate_flag = 'Y'
+code_gen_config as (select * from {{ ref(project_name, 'code_gen_config')  }} where generate_flag = 'Y'
 ), 
 header as (
 Select code_gen_config.source_name,  -1 sort_by, 

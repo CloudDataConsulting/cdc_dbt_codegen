@@ -9,7 +9,7 @@
  }}
 with 
 code_gen_config as 
-(select * from  {{ ref('code_gen_config') }} where generate_flag = 'Y'
+(select * from  {{ ref(project_name, 'code_gen_config') }} where generate_flag = 'Y'
 ),
 columns as (select * from {{ref ('src_column_list')}} ),
 all_columns as 
