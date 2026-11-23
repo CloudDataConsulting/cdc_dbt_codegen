@@ -1,4 +1,4 @@
-/* Copyright (C) 2022 Cloud Data Consultants Inc. - All Rights Reserved - 
+/* Copyright (C) 2022 Cloud Data Consulting, Inc. - All Rights Reserved - 
 *
 * You may not copy, reproduce, distribute, transmit, modify, create derivative works, 
 * or in any other way exploit any part of copyrighted material without permission.
